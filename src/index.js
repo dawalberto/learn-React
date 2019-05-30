@@ -35,6 +35,19 @@ function calculateWinner(squares) {
 
     return null;
 }
+
+function returnColAndRow(positionSquare) {
+    let col, row;
+    if (positionSquare === 0 || positionSquare === 3 || positionSquare === 6) { col =  1 }
+    if (positionSquare === 1 || positionSquare === 4 || positionSquare === 7) { col =  2 }
+    if (positionSquare === 2 || positionSquare === 5 || positionSquare === 8) { col =  3 }
+
+    if (positionSquare <= 2) { row = 1 }
+    else if (positionSquare <= 5) { row = 2 }
+    else { row = 3 }
+    
+    return `(col ${ col }, row ${ row })`
+}
   
 class Board extends React.Component {
     renderSquare(i) {
@@ -86,7 +99,7 @@ class Game extends React.Component {
         if (calculateWinner(squares) || squares[i]) { return }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
-            history: history.concat([{ squares: squares }]),
+            history: history.concat([{ squares: squares, position: i }]),
             xIsNext: !this.state.xIsNext,
             stepNumber: history.length
         });
@@ -105,7 +118,14 @@ class Game extends React.Component {
         const winner = calculateWinner(current.squares);
 
         const moves = history.map((step, move) => {
-            const desc = move ? `Go to move #${ move }` : 'Go to game start';
+            console.log('step', step)
+            console.log('move', move)
+            let desc = move ? `Go to move #${ move } ` : 'Go to game start ';
+            if (step.position || step.position === 0) {
+
+                desc += returnColAndRow(step.position)
+                
+            }
             return (
                 <li key={ move }>
                     <button onClick={ () => this.jumpTo(move) }>{ desc }</button>
